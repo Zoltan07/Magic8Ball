@@ -20,11 +20,19 @@ public class MainActivity extends AppCompatActivity {
     private TextView answerTextView;
     private Button generateButton;
 
-    // Válaszlista – magyarul
-    private final String[] answers = {
-            "Biztosan így van", "Határozottan igen", "Valószínűleg",
-            "Kérdezd meg később", "Nem tudom megmondani", "Ne számíts rá",
-            "Erősen kétséges", "Igen", "Nem", "Jelek szerint igen"
+    // Kategorizált válaszlisták
+    private final String[] positiveAnswers = {
+            "Biztosan így van", "Határozottan igen", "Igen", "Jelek szerint igen", "Bízhatsz benne",
+            "Valószínűleg", "Jó kilátások", "Igen, egészen biztosan"
+    };
+
+    private final String[] neutralAnswers = {
+            "Kérdezd meg később", "Nem tudom megmondani", "Koncentrálj és kérdezd újra",
+            "Jobb, ha most nem válaszolok", "Nem egyértelmű"
+    };
+
+    private final String[] negativeAnswers = {
+            "Ne számíts rá", "Erősen kétséges", "Nem", "Kilátások nem jók", "Forrásaim szerint nem"
     };
 
     // Rázásérzékelés
@@ -34,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private float lastX, lastY, lastZ;
     private long lastShakeTime;
 
+    private Random random;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,11 +52,12 @@ public class MainActivity extends AppCompatActivity {
         questionEditText = findViewById(R.id.questionEditText);
         answerTextView = findViewById(R.id.answerTextView);
         generateButton = findViewById(R.id.generateButton);
+        random = new Random();
 
         generateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generateAnswer();
+                generateAnswer("button", 0);  // gombnyomásnál nincs intenzitás
             }
         });
 
@@ -77,19 +88,24 @@ public class MainActivity extends AppCompatActivity {
                     long currentTime = System.currentTimeMillis();
                     if (currentTime - lastShakeTime > 1000) {
                         lastShakeTime = currentTime;
-                        generateAnswer();
+                        generateAnswer("shake", delta);
                     }
                 }
             }
 
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                // Nem szükséges kezelés
+                // nem kell kezelni
             }
         };
     }
 
-    private void generateAnswer() {
+    /**
+     * Válasz generálása gomb vagy rázás alapján
+     * @param source "shake" vagy "button"
+     * @param intensity rázás erőssége
+     */
+    private void generateAnswer(String source, double intensity) {
         String question = questionEditText.getText().toString().trim();
 
         if (question.isEmpty()) {
@@ -97,9 +113,27 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Random random = new Random();
-        int index = random.nextInt(answers.length);
-        String selectedAnswer = answers[index];
+        String selectedAnswer;
+
+        if ("shake".equals(source)) {
+            if (intensity > 15) {
+                selectedAnswer = positiveAnswers[random.nextInt(positiveAnswers.length)];
+            } else if (intensity > 12) {
+                selectedAnswer = neutralAnswers[random.nextInt(neutralAnswers.length)];
+            } else {
+                selectedAnswer = negativeAnswers[random.nextInt(negativeAnswers.length)];
+            }
+        } else {
+            // Gombnyomás: véletlen választás minden kategóriából
+            int category = random.nextInt(3);
+            if (category == 0) {
+                selectedAnswer = positiveAnswers[random.nextInt(positiveAnswers.length)];
+            } else if (category == 1) {
+                selectedAnswer = neutralAnswers[random.nextInt(neutralAnswers.length)];
+            } else {
+                selectedAnswer = negativeAnswers[random.nextInt(negativeAnswers.length)];
+            }
+        }
 
         answerTextView.setText(selectedAnswer);
     }
