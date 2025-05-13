@@ -45,7 +45,7 @@
             android:background="@android:color/transparent"
             android:layout_marginBottom="16dp" />
 
-        <!-- Módválasztó: Rázás / Gomb -->
+        <!-- Módválasztás -->
         <RadioGroup
             android:id="@+id/modeRadioGroup"
             android:layout_width="wrap_content"
@@ -69,6 +69,18 @@
                 android:layout_marginStart="24dp" />
         </RadioGroup>
 
+        <!-- Intenzitás kijelző sáv -->
+        <ProgressBar
+            android:id="@+id/shakeProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginBottom="12dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progress="0"
+            android:max="100"
+            android:progressTint="@android:color/holo_orange_light"
+            android:visibility="gone" />
+
         <!-- Kérdezz gomb -->
         <Button
             android:id="@+id/generateButton"
@@ -80,7 +92,7 @@
             android:textSize="18sp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Válasz megjelenítése -->
+        <!-- Válasz szöveg -->
         <TextView
             android:id="@+id/answerTextView"
             android:layout_width="wrap_content"

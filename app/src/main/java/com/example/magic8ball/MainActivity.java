@@ -10,6 +10,7 @@ import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup modeRadioGroup;
     private RadioButton shakeModeRadioButton;
     private RadioButton buttonModeRadioButton;
+    private ProgressBar shakeProgressBar;
 
     private final String[] positiveAnswers = {
             "Biztosan így van", "Határozottan igen", "Igen", "Jelek szerint igen", "Bízhatsz benne",
@@ -48,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private float lastX, lastY, lastZ;
     private long lastShakeTime;
 
+    private boolean measuringShake = false;
+    private double maxShakeValue = 0;
+    private long shakeStartTime = 0;
+
     private Random random;
     private MediaPlayer mediaPlayer;
     private Vibrator vibrator;
@@ -63,21 +69,18 @@ public class MainActivity extends AppCompatActivity {
         modeRadioGroup = findViewById(R.id.modeRadioGroup);
         shakeModeRadioButton = findViewById(R.id.shakeModeRadioButton);
         buttonModeRadioButton = findViewById(R.id.buttonModeRadioButton);
+        shakeProgressBar = findViewById(R.id.shakeProgressBar);
 
         random = new Random();
         mediaPlayer = MediaPlayer.create(this, R.raw.magic_sound);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
-        generateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (buttonModeRadioButton.isChecked()) {
-                    generateAnswer("button", 0); // csak gomb módban aktív
-                }
+        generateButton.setOnClickListener(view -> {
+            if (buttonModeRadioButton.isChecked()) {
+                generateAnswer("button", 0);
             }
         });
 
-        // Szenzor inicializálás
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (sensorManager != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         sensorListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-                if (!shakeModeRadioButton.isChecked()) return; // csak rázás módban aktív
+                if (!shakeModeRadioButton.isChecked()) return;
 
                 float x = event.values[0];
                 float y = event.values[1];
@@ -102,12 +105,25 @@ public class MainActivity extends AppCompatActivity {
 
                 double delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                if (delta > 12) {
-                    long currentTime = System.currentTimeMillis();
-                    if (currentTime - lastShakeTime > 1000) {
-                        lastShakeTime = currentTime;
-                        generateAnswer("shake", delta);
+                if (measuringShake) {
+                    if (delta > maxShakeValue) {
+                        maxShakeValue = delta;
+                        runOnUiThread(() -> shakeProgressBar.setProgress((int) Math.min(100, delta * 5)));
                     }
+
+                    if (System.currentTimeMillis() - shakeStartTime > 3000) {
+                        measuringShake = false;
+                        runOnUiThread(() -> shakeProgressBar.setVisibility(View.GONE));
+                        generateAnswer("shake", maxShakeValue);
+                    }
+                } else if (delta > 12 && !measuringShake) {
+                    measuringShake = true;
+                    maxShakeValue = delta;
+                    shakeStartTime = System.currentTimeMillis();
+                    runOnUiThread(() -> {
+                        shakeProgressBar.setProgress((int) Math.min(100, delta * 5));
+                        shakeProgressBar.setVisibility(View.VISIBLE);
+                    });
                 }
             }
 
