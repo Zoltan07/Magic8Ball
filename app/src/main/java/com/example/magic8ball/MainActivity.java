@@ -10,6 +10,8 @@ import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +24,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView answerTextView;
     private Button generateButton;
 
-    // Válaszkategóriák
+    private RadioGroup modeRadioGroup;
+    private RadioButton shakeModeRadioButton;
+    private RadioButton buttonModeRadioButton;
+
     private final String[] positiveAnswers = {
             "Biztosan így van", "Határozottan igen", "Igen", "Jelek szerint igen", "Bízhatsz benne",
             "Valószínűleg", "Jó kilátások", "Igen, egészen biztosan"
@@ -37,14 +42,12 @@ public class MainActivity extends AppCompatActivity {
             "Ne számíts rá", "Erősen kétséges", "Nem", "Kilátások nem jók", "Forrásaim szerint nem"
     };
 
-    // Rázásérzékelés
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private SensorEventListener sensorListener;
     private float lastX, lastY, lastZ;
     private long lastShakeTime;
 
-    // Véletlen szám és effektusok
     private Random random;
     private MediaPlayer mediaPlayer;
     private Vibrator vibrator;
@@ -57,15 +60,20 @@ public class MainActivity extends AppCompatActivity {
         questionEditText = findViewById(R.id.questionEditText);
         answerTextView = findViewById(R.id.answerTextView);
         generateButton = findViewById(R.id.generateButton);
-        random = new Random();
+        modeRadioGroup = findViewById(R.id.modeRadioGroup);
+        shakeModeRadioButton = findViewById(R.id.shakeModeRadioButton);
+        buttonModeRadioButton = findViewById(R.id.buttonModeRadioButton);
 
+        random = new Random();
         mediaPlayer = MediaPlayer.create(this, R.raw.magic_sound);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         generateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generateAnswer("button", 0);  // Gombnyomásnál nincs intenzitás
+                if (buttonModeRadioButton.isChecked()) {
+                    generateAnswer("button", 0); // csak gomb módban aktív
+                }
             }
         });
 
@@ -78,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         sensorListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
+                if (!shakeModeRadioButton.isChecked()) return; // csak rázás módban aktív
+
                 float x = event.values[0];
                 float y = event.values[1];
                 float z = event.values[2];
@@ -92,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
                 double delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                if (delta > 12) { // Rázási küszöb
+                if (delta > 12) {
                     long currentTime = System.currentTimeMillis();
                     if (currentTime - lastShakeTime > 1000) {
                         lastShakeTime = currentTime;
@@ -102,9 +112,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                // nem szükséges
-            }
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
         };
     }
 
@@ -139,15 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
         answerTextView.setText(selectedAnswer);
 
-        // Hang
-        if (mediaPlayer != null) {
-            mediaPlayer.start();
-        }
-
-        // Rezgés
-        if (vibrator != null) {
-            vibrator.vibrate(500);
-        }
+        if (mediaPlayer != null) mediaPlayer.start();
+        if (vibrator != null) vibrator.vibrate(500);
     }
 
     @Override

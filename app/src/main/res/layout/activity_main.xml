@@ -1,68 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
     android:background="#3163B6"
-    android:padding="16dp">
+    tools:context=".MainActivity">
 
-    <!-- Jósgömb ikon -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="🎱"
-        android:textSize="100sp"
-        android:fontFamily="serif"
-        android:textColor="@android:color/white"
-        android:gravity="center"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Cím -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Jósgömb"
-        android:textSize="32sp"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="24dp" />
-
-    <!-- Kérdés mező -->
-    <EditText
-        android:id="@+id/questionEditText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Írd be a kérdésed..."
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
-        android:background="@android:color/transparent"
-        android:layout_marginBottom="24dp" />
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp">
 
-    <!-- Gomb -->
-    <Button
-        android:id="@+id/generateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Kérdezz!"
-        android:backgroundTint="#2196F3"
-        android:textColor="@android:color/white"
-        android:elevation="4dp"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:textSize="18sp"
-        android:layout_marginBottom="24dp" />
+        <!-- Gömb ikon -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎱"
+            android:textSize="100sp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp" />
 
-    <!-- Válasz szöveg -->
-    <TextView
-        android:id="@+id/answerTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="A válasz itt jelenik meg..."
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:gravity="center" />
-</LinearLayout>
+        <!-- Cím -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jósgömb"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Kérdés beviteli mező -->
+        <EditText
+            android:id="@+id/questionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Írd be a kérdésed..."
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white"
+            android:background="@android:color/transparent"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Módválasztó: Rázás / Gomb -->
+        <RadioGroup
+            android:id="@+id/modeRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/shakeModeRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rázás"
+                android:textColor="@android:color/white" />
+
+            <RadioButton
+                android:id="@+id/buttonModeRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gomb"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="24dp" />
+        </RadioGroup>
+
+        <!-- Kérdezz gomb -->
+        <Button
+            android:id="@+id/generateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kérdezz!"
+            android:backgroundTint="#2196F3"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Válasz megjelenítése -->
+        <TextView
+            android:id="@+id/answerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A válasz itt jelenik meg..."
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+    </LinearLayout>
+</ScrollView>
