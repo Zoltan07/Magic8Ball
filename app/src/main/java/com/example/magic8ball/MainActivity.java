@@ -4,7 +4,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView answerTextView;
     private Button generateButton;
 
-    // Kategorizált válaszlisták
+    // Válaszkategóriák
     private final String[] positiveAnswers = {
             "Biztosan így van", "Határozottan igen", "Igen", "Jelek szerint igen", "Bízhatsz benne",
             "Valószínűleg", "Jó kilátások", "Igen, egészen biztosan"
@@ -42,7 +44,10 @@ public class MainActivity extends AppCompatActivity {
     private float lastX, lastY, lastZ;
     private long lastShakeTime;
 
+    // Véletlen szám és effektusok
     private Random random;
+    private MediaPlayer mediaPlayer;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +59,17 @@ public class MainActivity extends AppCompatActivity {
         generateButton = findViewById(R.id.generateButton);
         random = new Random();
 
+        mediaPlayer = MediaPlayer.create(this, R.raw.magic_sound);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
         generateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generateAnswer("button", 0);  // gombnyomásnál nincs intenzitás
+                generateAnswer("button", 0);  // Gombnyomásnál nincs intenzitás
             }
         });
 
-        // Rázásérzékelés beállítása
+        // Szenzor inicializálás
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (sensorManager != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -95,16 +103,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                // nem kell kezelni
+                // nem szükséges
             }
         };
     }
 
-    /**
-     * Válasz generálása gomb vagy rázás alapján
-     * @param source "shake" vagy "button"
-     * @param intensity rázás erőssége
-     */
     private void generateAnswer(String source, double intensity) {
         String question = questionEditText.getText().toString().trim();
 
@@ -124,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
                 selectedAnswer = negativeAnswers[random.nextInt(negativeAnswers.length)];
             }
         } else {
-            // Gombnyomás: véletlen választás minden kategóriából
             int category = random.nextInt(3);
             if (category == 0) {
                 selectedAnswer = positiveAnswers[random.nextInt(positiveAnswers.length)];
@@ -136,6 +138,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         answerTextView.setText(selectedAnswer);
+
+        // Hang
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
+
+        // Rezgés
+        if (vibrator != null) {
+            vibrator.vibrate(500);
+        }
     }
 
     @Override
@@ -150,5 +162,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(sensorListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        super.onDestroy();
     }
 }
