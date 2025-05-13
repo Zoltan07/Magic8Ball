@@ -1,5 +1,6 @@
 package com.example.magic8ball;
 
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,6 +13,7 @@ import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Locale;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
         answerTextView = findViewById(R.id.answerTextView);
         generateButton = findViewById(R.id.generateButton);
         modeRadioGroup = findViewById(R.id.modeRadioGroup);
-        languageRadioGroup = findViewById(R.id.languageRadioGroup);
+        //languageRadioGroup = findViewById(R.id.languageRadioGroup);
         shakeModeRadioButton = findViewById(R.id.shakeModeRadioButton);
         buttonModeRadioButton = findViewById(R.id.buttonModeRadioButton);
-        hungarianRadioButton = findViewById(R.id.hungarianRadioButton);
-        englishRadioButton = findViewById(R.id.englishRadioButton);
+        //hungarianRadioButton = findViewById(R.id.hungarianRadioButton);
+        //englishRadioButton = findViewById(R.id.englishRadioButton);
         shakeProgressBar = findViewById(R.id.shakeProgressBar);
 
         random = new Random();
@@ -88,7 +90,15 @@ public class MainActivity extends AppCompatActivity {
                 generateAnswer("button", 0);
             }
         });
-
+/*
+        languageRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.hungarianRadioButton) {
+                setLocale("hu");
+            } else if (checkedId == R.id.englishRadioButton) {
+                setLocale("en");
+            }
+        });
+*/
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (sensorManager != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -144,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         String question = questionEditText.getText().toString().trim();
 
         if (question.isEmpty()) {
-            answerTextView.setText("Írj be egy kérdést!");
+            answerTextView.setText(getString(R.string.hint_question));
             return;
         }
 
@@ -175,6 +185,15 @@ public class MainActivity extends AppCompatActivity {
         answerTextView.setText(selectedAnswer);
         if (mediaPlayer != null) mediaPlayer.start();
         if (vibrator != null) vibrator.vibrate(500);
+    }
+
+    private void setLocale(String langCode) {
+        Locale locale = new Locale(langCode);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+        recreate();
     }
 
     @Override

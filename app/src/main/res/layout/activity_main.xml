@@ -70,6 +70,7 @@
         </RadioGroup>
 
         <!-- Nyelvválasztás -->
+        <!--
         <RadioGroup
             android:id="@+id/languageRadioGroup"
             android:layout_width="wrap_content"
@@ -93,6 +94,7 @@
                 android:textColor="@android:color/white"
                 android:layout_marginStart="24dp" />
         </RadioGroup>
+        -->
 
         <!-- Intenzitás kijelző -->
         <ProgressBar

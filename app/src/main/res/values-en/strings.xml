@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Magic 8 Ball</string>
+    <string name="hint_question">Type your question...</string>
+    <string name="mode_shake">Shake</string>
+    <string name="mode_button">Button</string>
+    <string name="lang_hu">Hungarian</string>
+    <string name="lang_en">English</string>
+    <string name="ask_button">Ask!</string>
+    <string name="default_answer">Your answer will appear here...</string>
+</resources>

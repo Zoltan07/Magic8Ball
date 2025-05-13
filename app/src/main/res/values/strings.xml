@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">Magic8Ball</string>
+    <string name="app_name">Jósgömb</string>
+    <string name="hint_question">Írd be a kérdésed...</string>
+    <string name="mode_shake">Rázás</string>
+    <string name="mode_button">Gomb</string>
+    <string name="lang_hu">Magyar</string>
+    <string name="lang_en">English</string>
+    <string name="ask_button">Kérdezz!</string>
+    <string name="default_answer">A válasz itt jelenik meg...</string>
 </resources>
