@@ -33,7 +33,7 @@
             android:textColor="@android:color/white"
             android:layout_marginBottom="24dp" />
 
-        <!-- Kérdés beviteli mező -->
+        <!-- Kérdés mező -->
         <EditText
             android:id="@+id/questionEditText"
             android:layout_width="match_parent"
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="12dp">
 
             <RadioButton
                 android:id="@+id/shakeModeRadioButton"
@@ -69,17 +69,42 @@
                 android:layout_marginStart="24dp" />
         </RadioGroup>
 
-        <!-- Intenzitás kijelző sáv -->
+        <!-- Nyelvválasztás -->
+        <RadioGroup
+            android:id="@+id/languageRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/hungarianRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Magyar"
+                android:checked="true"
+                android:textColor="@android:color/white" />
+
+            <RadioButton
+                android:id="@+id/englishRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="English"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="24dp" />
+        </RadioGroup>
+
+        <!-- Intenzitás kijelző -->
         <ProgressBar
             android:id="@+id/shakeProgressBar"
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:layout_marginBottom="12dp"
             style="?android:attr/progressBarStyleHorizontal"
-            android:progress="0"
             android:max="100"
+            android:progress="0"
             android:progressTint="@android:color/holo_orange_light"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:layout_marginBottom="12dp" />
 
         <!-- Kérdezz gomb -->
         <Button
@@ -87,8 +112,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Kérdezz!"
-            android:backgroundTint="#2196F3"
             android:textColor="@android:color/white"
+            android:backgroundTint="#2196F3"
             android:textSize="18sp"
             android:layout_marginBottom="24dp" />
 
@@ -98,9 +123,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="A válasz itt jelenik meg..."
+            android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@android:color/white"
             android:gravity="center"
             android:layout_marginBottom="32dp" />
     </LinearLayout>

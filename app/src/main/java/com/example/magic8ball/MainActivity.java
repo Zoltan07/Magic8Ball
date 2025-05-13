@@ -8,12 +8,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,24 +19,34 @@ public class MainActivity extends AppCompatActivity {
     private EditText questionEditText;
     private TextView answerTextView;
     private Button generateButton;
-
-    private RadioGroup modeRadioGroup;
-    private RadioButton shakeModeRadioButton;
-    private RadioButton buttonModeRadioButton;
+    private RadioGroup modeRadioGroup, languageRadioGroup;
+    private RadioButton shakeModeRadioButton, buttonModeRadioButton;
+    private RadioButton hungarianRadioButton, englishRadioButton;
     private ProgressBar shakeProgressBar;
 
     private final String[] positiveAnswers = {
             "Biztosan így van", "Határozottan igen", "Igen", "Jelek szerint igen", "Bízhatsz benne",
             "Valószínűleg", "Jó kilátások", "Igen, egészen biztosan"
     };
-
     private final String[] neutralAnswers = {
             "Kérdezd meg később", "Nem tudom megmondani", "Koncentrálj és kérdezd újra",
             "Jobb, ha most nem válaszolok", "Nem egyértelmű"
     };
-
     private final String[] negativeAnswers = {
             "Ne számíts rá", "Erősen kétséges", "Nem", "Kilátások nem jók", "Forrásaim szerint nem"
+    };
+
+    private final String[] positiveAnswers_en = {
+            "It is certain", "Definitely yes", "Yes", "Signs point to yes", "You may rely on it",
+            "Most likely", "Outlook good", "Without a doubt"
+    };
+    private final String[] neutralAnswers_en = {
+            "Reply hazy, try again", "Ask again later", "Better not tell you now",
+            "Cannot predict now", "Concentrate and ask again"
+    };
+    private final String[] negativeAnswers_en = {
+            "Don't count on it", "My reply is no", "Outlook not so good",
+            "Very doubtful", "My sources say no"
     };
 
     private SensorManager sensorManager;
@@ -67,8 +72,11 @@ public class MainActivity extends AppCompatActivity {
         answerTextView = findViewById(R.id.answerTextView);
         generateButton = findViewById(R.id.generateButton);
         modeRadioGroup = findViewById(R.id.modeRadioGroup);
+        languageRadioGroup = findViewById(R.id.languageRadioGroup);
         shakeModeRadioButton = findViewById(R.id.shakeModeRadioButton);
         buttonModeRadioButton = findViewById(R.id.buttonModeRadioButton);
+        hungarianRadioButton = findViewById(R.id.hungarianRadioButton);
+        englishRadioButton = findViewById(R.id.englishRadioButton);
         shakeProgressBar = findViewById(R.id.shakeProgressBar);
 
         random = new Random();
@@ -116,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(() -> shakeProgressBar.setVisibility(View.GONE));
                         generateAnswer("shake", maxShakeValue);
                     }
-                } else if (delta > 12 && !measuringShake) {
+                } else if (delta > 12) {
                     measuringShake = true;
                     maxShakeValue = delta;
                     shakeStartTime = System.currentTimeMillis();
@@ -140,29 +148,31 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        String selectedAnswer;
+        String[] positives = hungarianRadioButton.isChecked() ? positiveAnswers : positiveAnswers_en;
+        String[] neutrals = hungarianRadioButton.isChecked() ? neutralAnswers : neutralAnswers_en;
+        String[] negatives = hungarianRadioButton.isChecked() ? negativeAnswers : negativeAnswers_en;
 
+        String selectedAnswer;
         if ("shake".equals(source)) {
             if (intensity > 15) {
-                selectedAnswer = positiveAnswers[random.nextInt(positiveAnswers.length)];
+                selectedAnswer = positives[random.nextInt(positives.length)];
             } else if (intensity > 12) {
-                selectedAnswer = neutralAnswers[random.nextInt(neutralAnswers.length)];
+                selectedAnswer = neutrals[random.nextInt(neutrals.length)];
             } else {
-                selectedAnswer = negativeAnswers[random.nextInt(negativeAnswers.length)];
+                selectedAnswer = negatives[random.nextInt(negatives.length)];
             }
         } else {
             int category = random.nextInt(3);
             if (category == 0) {
-                selectedAnswer = positiveAnswers[random.nextInt(positiveAnswers.length)];
+                selectedAnswer = positives[random.nextInt(positives.length)];
             } else if (category == 1) {
-                selectedAnswer = neutralAnswers[random.nextInt(neutralAnswers.length)];
+                selectedAnswer = neutrals[random.nextInt(neutrals.length)];
             } else {
-                selectedAnswer = negativeAnswers[random.nextInt(negativeAnswers.length)];
+                selectedAnswer = negatives[random.nextInt(negatives.length)];
             }
         }
 
         answerTextView.setText(selectedAnswer);
-
         if (mediaPlayer != null) mediaPlayer.start();
         if (vibrator != null) vibrator.vibrate(500);
     }
